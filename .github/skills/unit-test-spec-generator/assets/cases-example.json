@@ -1,0 +1,80 @@
+[
+  {
+    "Story_ID": "US-010",
+    "Requirement_IDs": "PR-007; DR-010-02; AC-1",
+    "Unit_Under_Test": "DrvInDebounce",
+    "Function_Under_Test": "DrvInDebounce_Init",
+    "Category": "Positive",
+    "Title": "Init converts debounce ms to ticks with round-up",
+    "Preconditions": "Instance zero-filled; test constants labelled TEST-ONLY",
+    "Inputs": "safe_default=0; debounce_ms=11 (TEST-ONLY); tick_period_ms=2",
+    "Mocked_Dependencies": "None (pure logic, no external dependency)",
+    "Expected_Result": "Returns DRVIN_DEB_OK; threshold_ticks=6; initialised=true; stable_value=0",
+    "Source_Ref": "docs/design/US-010-driver-input-filtering-and-debounce.md#T-04"
+  },
+  {
+    "Story_ID": "US-010",
+    "Requirement_IDs": "DR-010-07",
+    "Unit_Under_Test": "DrvInDebounce",
+    "Function_Under_Test": "DrvInDebounce_Init",
+    "Category": "Negative",
+    "Title": "Init rejects zero debounce time",
+    "Preconditions": "Instance zero-filled",
+    "Inputs": "safe_default=0; debounce_ms=0; tick_period_ms=2",
+    "Mocked_Dependencies": "None (pure logic, no external dependency)",
+    "Expected_Result": "Returns DRVIN_DEB_ERR_BAD_CONFIG; initialised=false",
+    "Source_Ref": "docs/design/US-010-driver-input-filtering-and-debounce.md#T-14"
+  },
+  {
+    "Story_ID": "US-010",
+    "Requirement_IDs": "DR-010-02; DR-010-07",
+    "Unit_Under_Test": "DrvInDebounce",
+    "Function_Under_Test": "DrvInDebounce_Init",
+    "Category": "Boundary",
+    "Title": "Init accepts minimum one-tick threshold",
+    "Preconditions": "Instance zero-filled",
+    "Inputs": "safe_default=0; debounce_ms=1 (TEST-ONLY); tick_period_ms=2",
+    "Mocked_Dependencies": "None (pure logic, no external dependency)",
+    "Expected_Result": "Returns DRVIN_DEB_OK; threshold_ticks=1",
+    "Source_Ref": "docs/design/US-010-driver-input-filtering-and-debounce.md#T-05"
+  },
+  {
+    "Story_ID": "US-010",
+    "Requirement_IDs": "PR-007; DR-010-03; DR-010-05; AC-3",
+    "Unit_Under_Test": "DrvInDebounce",
+    "Function_Under_Test": "DrvInDebounce_Update",
+    "Category": "Positive",
+    "Title": "Clean step is reported exactly on the Nth tick",
+    "Preconditions": "Instance initialised with threshold N=5 (TEST-ONLY); stable_value=A",
+    "Inputs": "raw_value=B held for 5 consecutive Update calls",
+    "Mocked_Dependencies": "None (pure logic, no external dependency)",
+    "Expected_Result": "Calls 1 to 4: status OK, changed=false, stable_out=A; call 5: changed=true, stable_out=B; call 6: changed=false",
+    "Source_Ref": "docs/design/US-010-driver-input-filtering-and-debounce.md#T-01"
+  },
+  {
+    "Story_ID": "US-010",
+    "Requirement_IDs": "DR-010-08",
+    "Unit_Under_Test": "DrvInDebounce",
+    "Function_Under_Test": "DrvInDebounce_Update",
+    "Category": "Negative",
+    "Title": "Update rejects NULL output pointer without writing outputs",
+    "Preconditions": "Instance initialised; changed_out variable pre-set to a sentinel",
+    "Inputs": "raw_value=B; stable_out=NULL; changed_out=valid pointer",
+    "Mocked_Dependencies": "None (pure logic, no external dependency)",
+    "Expected_Result": "Returns DRVIN_DEB_ERR_NULL_PTR; changed_out keeps the sentinel; instance state unchanged",
+    "Source_Ref": "docs/design/US-010-driver-input-filtering-and-debounce.md#T-13"
+  },
+  {
+    "Story_ID": "US-010",
+    "Requirement_IDs": "PR-007; DR-010-03; AC-2",
+    "Unit_Under_Test": "DrvInDebounce",
+    "Function_Under_Test": "DrvInDebounce_Update",
+    "Category": "Boundary",
+    "Title": "Bounce of N-1 ticks never changes the output",
+    "Preconditions": "Instance initialised with threshold N=5 (TEST-ONLY); stable_value=A",
+    "Inputs": "raw_value=B for 4 calls, then A for 1 call",
+    "Mocked_Dependencies": "None (pure logic, no external dependency)",
+    "Expected_Result": "changed=false on every call; stable_out=A throughout; count_ticks=0 after the final call",
+    "Source_Ref": "docs/design/US-010-driver-input-filtering-and-debounce.md#T-02"
+  }
+]

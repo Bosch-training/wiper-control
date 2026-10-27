@@ -1,0 +1,75 @@
+name: cicd
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Unit Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Build (host, C99)
+        run: make build
+
+      - name: Unit tests (host)
+        run: make test
+
+  code-quality:
+    name: Code Quality Scans
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install static analysis tools
+        run: sudo apt-get update && sudo apt-get install -y cppcheck clang-tidy
+
+      - name: Lint (Cppcheck + MISRA add-on, clang-tidy)
+        run: make lint
+
+  hex:
+    name: Hex Image (optional)
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # Best-effort: RH850 cross-toolchain/MCU are not yet selected
+      # (AGENTS.md Section 7). This step skips with a clear message
+      # instead of failing the pipeline until the toolchain is pinned.
+      - name: Attempt hex generation
+        run: make hex
+
+      - name: Upload hex artifact
+        if: hashFiles('build/app.hex') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-hex
+          path: build/app.hex

@@ -6,16 +6,18 @@
 |---|---|
 | Story ID | US-010 |
 | Title | Driver input filtering and debounce |
-| Jira | [WIPC-7](https://karthikeyanaitrainings.atlassian.net/browse/WIPC-7) (status: To Do) |
+| Jira | [WIPC-7](https://karthikeyanaitrainings.atlassian.net/browse/WIPC-7) |
 | Size | S |
-| Review gate | Standard (per backlog and Jira label `review-standard`). No ASIL is assumed; see OQ-US010-06. |
-| Document status | Draft |
+| Review gate | Standard (per backlog Review column). No ASIL is assumed; see OQ-US010-06. |
+| Document status | Draft (re-verified 2026-10-27) |
 | Date | 2026-10-27 |
 | Author | AI-assisted, pending human review |
 
 Sources: [PRD v1.0](../wiper_control_system_product_requirements.md), [user stories backlog](../wiper_control_system_user_stories.md), [AGENTS.md](../../AGENTS.md).
 
 Everything below is a proposal pending human review. Nothing here claims compliance or verified results.
+
+**Re-verification note (2026-10-27):** This document was re-checked against the PRD and against Jira search results for WIPC-7 in this session. Jira tool access this session was limited to semantic search (read-only snippets); no `getJiraIssue`, transition, comment, or assignment tools were available. The search confirmed: issue title, `Traces to: PR-007`, `Size / Review: S / Standard`, and `Depends on: None (standalone; ... no dependency on the HAL input module US-009)` — all consistent with this document's existing content and with OQ-US010-03 below. Current Jira status, assignee, labels, and comment history could not be independently reconfirmed this session; no start-of-work (assign/transition) or end-of-work (comment) Jira updates were made. See Section 8 for the recommendation to perform these manually or re-run with full Jira tool access.
 
 ## 2. Story summary
 
@@ -285,6 +287,7 @@ Every requirement above has at least one test; every test (T-01 to T-18) appears
 | Risk: undefined response budget | Cannot show AC-3 compliance against a real number until OQ-US010-01 is answered. |
 | Risk: unknown hardware | If the real input is network-delivered, debounce may be unnecessary or differ; the design is cheap to adapt. |
 | Risk: startup latency | DR-010-06 delays the first valid mode by N ticks; may conflict with a startup-response need (to be checked with US-007). |
+| Risk: Jira state not reconfirmed | This session's Jira tool access was search-only; current WIPC-7 status, assignee, labels, and comments were not re-fetched, and no assign/transition/comment actions were performed. Perform these manually, or re-run this analysis with full Jira read/write tool access. |
 | Recommended doc changes (not made here) | PRD: add a driver-command response-time requirement and, if applicable, an OFF-specific one. Backlog: reconcile US-010 "Depends on" (US-009 vs none) with Jira. |
 
 ## 9. Open questions and decisions

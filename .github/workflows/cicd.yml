@@ -73,3 +73,33 @@ jobs:
         with:
           name: app-hex
           path: build/app.hex
+
+  deploy:
+    name: Deploy to EC2
+    needs: [hex, code-quality]
+    # Only deploy from main (push or manual run), never from a PR.
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      # StrictHostKeyChecking is disabled per project decision (host key
+      # pinning not set up yet); this accepts any host key and is open to
+      # MITM risk, so only point EC2_HOST at a trusted, known instance.
+      - name: Write deploy marker over SSH
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            -i ~/.ssh/deploy_key "${EC2_USER:-ubuntu}@${EC2_HOST}" \
+            "echo \"\$(date -u +%Y-%m-%dT%H:%M:%SZ) hello world\" > /home/ubuntu/deploy-info.txt"
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

@@ -34,12 +34,13 @@ build:
 
 test:
 	@tests="$$(find $(TEST_DIR) -name '*.c' 2>/dev/null)"; \
+	srcs="$$(find $(SRC_DIR) -name '*.c' 2>/dev/null)"; \
 	if [ -z "$$tests" ]; then \
 		echo "[test] No unit tests under $(TEST_DIR)/ yet; nothing to run."; \
 	else \
-		echo "[test] Building and running: $$tests"; \
+		echo "[test] Building and running: $$tests $$srcs"; \
 		mkdir -p $(BUILD_DIR); \
-		$(CC) $(CFLAGS) $(INCLUDES) $$tests -o $(BUILD_DIR)/unit_tests; \
+		$(CC) $(CFLAGS) $(INCLUDES) $$tests $$srcs -o $(BUILD_DIR)/unit_tests; \
 		$(BUILD_DIR)/unit_tests; \
 	fi
 

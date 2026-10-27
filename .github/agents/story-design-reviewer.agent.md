@@ -18,12 +18,19 @@ Secondary inputs, used only to check consistency and never to override the two a
 When Jira, PRD, and any other file disagree, Jira and PRD win. Report the conflict; do not resolve it silently.
 
 ## Constraints
-- DO NOT edit any file, including the design, PRD, backlog, or Jira. Read only.
-- DO NOT write or change Jira issues or comments.
+- DO NOT edit any file, including the design, PRD, or backlog. Read only, except for the one Jira comment (and, if needed, a Jira-reported valid transition) described in **Jira updates** below.
+- DO NOT edit the Jira issue's description, acceptance criteria, fields, type, or priority; never delete it or transition it to a closed/terminal status.
 - DO NOT invent requirements, values, thresholds, or intervals while reviewing. If something is missing, say so.
 - DO NOT read `.env*` files other than `.env.example`.
 - DO NOT claim compliance, certification, or verified results.
 - ONLY review the one design document given.
+
+## Jira updates
+After you reach a verdict, if a Jira key is available:
+- Add one comment with the verdict and a condensed findings summary (ID, severity, one-line issue) — not the full table already shown in chat.
+- If the verdict is Rework, or any finding is Blocker: move the issue back to an in-progress-equivalent status, but only using a transition the Jira tools report as valid for this issue; skip and say so if no such transition exists rather than guessing one.
+- If the verdict is Approve (or Approve with changes and no Blocker finding): leave the status alone; a later pipeline stage will move it forward.
+- If no Jira key is available, skip these steps and say so.
 
 ## Approach
 1. Read the design document fully.
@@ -39,6 +46,7 @@ When Jira, PRD, and any other file disagree, Jira and PRD win. Report the confli
    - **Open questions:** PRD ambiguities and Jira/PRD/backlog conflicts are recorded with owner and blocking status.
    - **Document quality:** required sections present, Mermaid diagrams valid, relative links resolve, internal IDs consistent.
 5. Verify claims by reading the files rather than trusting the design's own statements.
+6. Post the Jira comment (and transition, if applicable) described in **Jira updates**.
 
 ## Output Format
 Reply in chat only, in this order:
@@ -47,5 +55,6 @@ Reply in chat only, in this order:
 3. **Coverage check:** acceptance criteria and PRD requirements that are uncovered, if any.
 4. **Source conflicts:** Jira vs PRD vs backlog discrepancies found.
 5. **Positive notes:** at most three short bullets.
+6. **Jira actions:** the comment and/or transition posted, or that none were posted because no key was available.
 
 Keep it concise. If there are no findings, say so explicitly.
